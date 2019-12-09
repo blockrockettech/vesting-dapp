@@ -1,32 +1,61 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+            <router-link to="/">Cudos Vesting Portal</router-link>
+
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto"></ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <router-view style="margin-top: 100px"></router-view>
+
+        <footer>
+            <current-network></current-network>
+        </footer>
     </div>
-    <router-view/>
-  </div>
 </template>
 
+<script>
+    import {mapState} from 'vuex';
+    import CurrentNetwork from '@/components/CurrentNetwork.vue';
+    import web3Connect from '@/web3ConnectService';
+
+    export default {
+        name: 'App',
+        data() {
+            return {
+                collapsed: false,
+                mintingExpanded: true
+            };
+        },
+        computed: {
+            ...mapState([
+                // 'account',
+                // 'etherscanBase',
+                // 'networkId',
+            ]),
+        },
+        components: {
+            CurrentNetwork
+        },
+        methods: {
+            onLogin(evt) {
+                evt.preventDefault();
+                web3Connect.toggleModal();
+            },
+        },
+        created: async function () {
+            // web3Connect.on('connect', provider => {
+            //     this.$store.dispatch('bootstrap', provider);
+            // });
+        },
+    };
+</script>
+
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
+    @import '../node_modules/bootstrap/scss/bootstrap';
 </style>
