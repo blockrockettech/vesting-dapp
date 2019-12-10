@@ -6,6 +6,7 @@ import * as Web3 from 'web3';
 Vue.use(Vuex);
 
 const CudosTokenJson = require("../truffle/CudosToken");
+const VestingContractJson = require("../truffle/VestingContract");
 
 export default new Vuex.Store({
     state: {
@@ -18,12 +19,15 @@ export default new Vuex.Store({
         account: null,
         accountBalance: null,
 
+        // Vesting
+        schedule: null,
+
         web3: null,
         notifyInstance: null,
 
-        // Countracts
+        // Contracts
         cudosTokenContract: null,
-        cudosVestingContract: null,
+        vestingContract: null,
     },
     mutations: {
         networkDetails(state, {networkId, networkName, etherscanBase}) {
@@ -33,6 +37,7 @@ export default new Vuex.Store({
             // state.notifyInstance = notifier(networkId);
 
             state.cudosTokenContract = new state.web3.eth.Contract(CudosTokenJson.abi, CudosTokenJson.networks[state.networkId].address);
+            state.vestingContract = new state.web3.eth.Contract(VestingContractJson.abi, VestingContractJson.networks[state.networkId].address);
         },
 
         account(state, account) {
@@ -43,13 +48,16 @@ export default new Vuex.Store({
             state.accountBalance = balanceOfAccount;
         },
 
+        schedule(state, schedule) {
+            state.schedule = schedule;
+        },
+
         web3(state, web3) {
             state.web3 = web3;
         },
     },
     getters: {
-        isConnected() {
-            // @ts-ignore
+        isConnected: () => {
             return window.web3 !== undefined;
         },
 
@@ -58,15 +66,12 @@ export default new Vuex.Store({
             return `${state.etherscanBase}/token/${networkAddress}?a=${tokenId}`;
         },
 
-        validateAddress: state => (address) => {
-            return state.web3.utils.isAddress(address);
-        },
-        checksumAddress: state => (address) => {
-            try {
-                return state.web3.utils.toChecksumAddress(address);
-            } catch (e) {
-                return address;
+        hasValidSchedule: state => () => {
+            if (state.schedule) {
+                return state.schedule._start && state.schedule._start > 0;
             }
+
+            return false;
         },
     },
     actions: {
@@ -96,6 +101,8 @@ export default new Vuex.Store({
                     commit('account', account);
 
                     dispatch('balanceOfAccount');
+
+                    dispatch('vestingScheduleForBeneficiary');
                 } else {
                     console.log(`Error getting accounts`, error);
                 }
@@ -130,21 +137,29 @@ export default new Vuex.Store({
                     return 'MAINNET';
                 case 4:
                     return 'RINKEBY';
-                case 3:
-                    return 'ROPSTEN';
+                case 5777:
+                    return 'LOCAL';
                 default:
                     return 'UNKNOWN';
             }
         },
 
-        ////////////////////
-        // Token Contract calls //
+        /////////////////////
+        // Token calls    //
         ////////////////////
 
         async balanceOfAccount({commit, state}) {
             const balanceOfAccount = await state.cudosTokenContract.methods.balanceOf(state.account).call();
             commit('balanceOfAccount', balanceOfAccount);
         },
+
+        /////////////////////
+        // Vesting calls   //
+        ////////////////////
+
+        async vestingScheduleForBeneficiary({commit, state}) {
+            const schedule = await state.vestingContract.methods.vestingScheduleForBeneficiary(state.account).call();
+            commit('schedule', schedule);
+        },
     },
-    modules: {}
 });

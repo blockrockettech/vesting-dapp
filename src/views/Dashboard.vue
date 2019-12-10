@@ -15,21 +15,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="card bg-warning text-white mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Vested CUDO Tokens</div>
-                            <div class="card-body">
-                                <h5 class="card-title">20000 CUDO</h5>
-                                <p class="card-text">Starting 1st Jan 2020 and ending 2nd Aug 2020</p>
+                    <div v-if="hasValidSchedule()">
+                        <div class="col">
+                            <div class="card bg-warning text-white mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Vested CUDO Tokens</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">20000 CUDO</h5>
+                                    <p class="card-text">Starting 1st Jan 2020 and ending 2nd Aug 2020</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card bg-success text-white mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Cudo Token Available NOW</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">1234 CUDO</h5>
+                                    <p class="card-text">Amount of tokens you can draw down from the vesting contract</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="card bg-success text-white mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Cudo Token Available NOW</div>
-                            <div class="card-body">
-                                <h5 class="card-title">1234 CUDO</h5>
-                                <p class="card-text">Amount of tokens you can draw down from the vesting contract</p>
+                    <div v-else>
+                        <div class="col">
+                            <div class="alert alert-info">
+                                You do not have a valid vesting schedule for <code>{{ account }}</code>
                             </div>
                         </div>
                     </div>
@@ -48,9 +57,7 @@
 </template>
 
 <script>
-
-
-    import {mapState} from "vuex";
+    import {mapGetters, mapState} from "vuex";
 
     export default {
         name: 'home',
@@ -58,9 +65,11 @@
             ...mapState([
                 'account',
                 'accountBalance',
-                // 'etherscanBase',
-                // 'networkId',
+                'schedule',
             ]),
+            ...mapGetters([
+                'hasValidSchedule',
+            ])
         },
         methods: {
             onLogin() {

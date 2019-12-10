@@ -37,8 +37,6 @@
         computed: {
             ...mapState([
                 'account',
-                // 'etherscanBase',
-                // 'networkId',
             ]),
         },
         components: {
