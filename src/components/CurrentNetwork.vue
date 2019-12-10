@@ -1,5 +1,5 @@
 <template>
-  <span v-if="networkName">{{ networkName }}</span>
+  <span class="badge badge-dark" v-if="networkName">{{ networkName }}</span>
 </template>
 
 <script>

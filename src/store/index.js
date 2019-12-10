@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import * as Web3 from 'web3';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -76,11 +78,11 @@ export default new Vuex.Store({
             }
         },
 
-        initWeb3({commit, dispatch}, web3) {
+        initWeb3({commit, dispatch, state}, web3) {
             commit('web3', web3);
 
             dispatch('getNetwork').then(() => {
-                web3.eth.getAccounts((error, accounts) => {
+                state.web3.eth.getAccounts((error, accounts) => {
                     if (!error) {
                         const account = accounts[0];
                         commit('account', account);
@@ -99,7 +101,7 @@ export default new Vuex.Store({
         },
 
         getNetworkId({state}) {
-            return 4//state.web3.eth.net.getId();
+            return state.web3.eth.net.getId();
         },
 
         getEtherscanAddress({}, networkId) {

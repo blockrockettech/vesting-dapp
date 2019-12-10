@@ -1,11 +1,13 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="min-height: 50px">
             <router-link to="/">Cudos Vesting Portal</router-link>
 
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-                <ul class="navbar-nav mr-auto"></ul>
-                <form class="form-inline my-2 my-lg-0">
+                <ul class="navbar-nav ml-auto">
+                    <a href="#" class="nav-link">{{ account }}</a>
+                </ul>
+                <form class="form-inline my-2 my-lg-0" v-if="!account">
                     <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Login</button>
                 </form>
             </div>
@@ -34,7 +36,7 @@
         },
         computed: {
             ...mapState([
-                // 'account',
+                'account',
                 // 'etherscanBase',
                 // 'networkId',
             ]),
@@ -43,14 +45,12 @@
             CurrentNetwork
         },
         methods: {
-            onLogin(evt) {
-                evt.preventDefault();
+            onLogin() {
                 web3Connect.toggleModal();
             },
         },
         created: async function () {
             web3Connect.on('connect', provider => {
-                console.log(provider);
                 this.$store.dispatch('bootstrap', provider);
             });
         },
