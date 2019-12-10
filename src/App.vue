@@ -8,7 +8,7 @@
                     <a href="#" class="nav-link">{{ account }}</a>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" v-if="!account">
-                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Login</button>
+                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Sign in</button>
                 </form>
             </div>
         </nav>

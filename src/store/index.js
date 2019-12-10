@@ -5,6 +5,8 @@ import * as Web3 from 'web3';
 
 Vue.use(Vuex);
 
+const CudosTokenJson = require("../truffle/CudosToken");
+
 export default new Vuex.Store({
     state: {
         // Network
@@ -14,6 +16,7 @@ export default new Vuex.Store({
 
         // Account
         account: null,
+        accountBalance: null,
 
         web3: null,
         notifyInstance: null,
@@ -29,11 +32,15 @@ export default new Vuex.Store({
             state.etherscanBase = etherscanBase;
             // state.notifyInstance = notifier(networkId);
 
-            // state.tokenLandiaContract = new state.web3.eth.Contract(TokenlandiaJson.abi, TokenlandiaJson.networks[state.networkId].address);
+            state.cudosTokenContract = new state.web3.eth.Contract(CudosTokenJson.abi, CudosTokenJson.networks[state.networkId].address);
         },
 
         account(state, account) {
             state.account = account;
+        },
+
+        balanceOfAccount(state, balanceOfAccount) {
+            state.accountBalance = balanceOfAccount;
         },
 
         web3(state, web3) {
@@ -47,8 +54,8 @@ export default new Vuex.Store({
         },
 
         etherscanTokenLink: state => (tokenId) => {
-            // const networkAddress = TokenlandiaJson.networks[state.networkId].address;
-            // return `${state.etherscanBase}/token/${networkAddress}?a=${tokenId}`;
+            const networkAddress = CudosTokenJson.networks[state.networkId].address;
+            return `${state.etherscanBase}/token/${networkAddress}?a=${tokenId}`;
         },
 
         validateAddress: state => (address) => {
@@ -86,6 +93,8 @@ export default new Vuex.Store({
                     if (!error) {
                         const account = accounts[0];
                         commit('account', account);
+
+                        dispatch('balanceOfAccount');
                     } else {
                         console.log(`Error getting accounts`, error);
                     }
@@ -126,6 +135,15 @@ export default new Vuex.Store({
                 default:
                     return 'UNKNOWN';
             }
+        },
+
+        ////////////////////
+        // Token Contract calls //
+        ////////////////////
+
+        async balanceOfAccount({state}) {
+            const balanceOfAccount = await state.cudosTokenContract.methods.balanceOf(state.account).call();
+            commit('balanceOfAccount', balanceOfAccount);
         },
     },
     modules: {}

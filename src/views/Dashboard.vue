@@ -40,7 +40,7 @@
                 </p>
             </div>
             <div v-else>
-                <button class="btn btn-secondary btn-lg btn-block" @click="onLogin">Login</button>
+                <button class="btn btn-secondary btn-lg btn-block" @click="onLogin">Sign in</button>
             </div>
         </div>
 
