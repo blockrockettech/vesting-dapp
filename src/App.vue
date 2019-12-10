@@ -6,14 +6,14 @@
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto"></ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Search</button>
+                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Login</button>
                 </form>
             </div>
         </nav>
 
-        <router-view style="margin-top: 100px"></router-view>
+        <router-view style="margin-top: 75px"></router-view>
 
-        <footer>
+        <footer class="container" style="margin-top: 100px">
             <current-network></current-network>
         </footer>
     </div>
@@ -49,9 +49,10 @@
             },
         },
         created: async function () {
-            // web3Connect.on('connect', provider => {
-            //     this.$store.dispatch('bootstrap', provider);
-            // });
+            web3Connect.on('connect', provider => {
+                console.log(provider);
+                this.$store.dispatch('bootstrap', provider);
+            });
         },
     };
 </script>
