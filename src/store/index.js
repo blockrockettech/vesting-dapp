@@ -85,20 +85,20 @@ export default new Vuex.Store({
             }
         },
 
-        initWeb3({commit, dispatch, state}, web3) {
+        async initWeb3({commit, dispatch, state}, web3) {
             commit('web3', web3);
 
-            dispatch('getNetwork').then(() => {
-                state.web3.eth.getAccounts((error, accounts) => {
-                    if (!error) {
-                        const account = accounts[0];
-                        commit('account', account);
+            await dispatch('getNetwork');
 
-                        dispatch('balanceOfAccount');
-                    } else {
-                        console.log(`Error getting accounts`, error);
-                    }
-                });
+            state.web3.eth.getAccounts((error, accounts) => {
+                if (!error) {
+                    const account = accounts[0];
+                    commit('account', account);
+
+                    dispatch('balanceOfAccount');
+                } else {
+                    console.log(`Error getting accounts`, error);
+                }
             });
         },
 
@@ -141,7 +141,7 @@ export default new Vuex.Store({
         // Token Contract calls //
         ////////////////////
 
-        async balanceOfAccount({state}) {
+        async balanceOfAccount({commit, state}) {
             const balanceOfAccount = await state.cudosTokenContract.methods.balanceOf(state.account).call();
             commit('balanceOfAccount', balanceOfAccount);
         },

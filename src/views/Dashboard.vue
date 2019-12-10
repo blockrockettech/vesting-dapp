@@ -7,10 +7,10 @@
             <div v-if="account">
                 <div class="row">
                     <div class="col">
-                        <div class="card bg-light mb-3" style="max-width: 18rem;">
+                        <div class="card bg-light mb-3" style="max-width: 18rem;" v-if="accountBalance">
                             <div class="card-header">CUDO Token Balance</div>
                             <div class="card-body">
-                                <h5 class="card-title">1000 CUDO</h5>
+                                <h5 class="card-title">{{ accountBalance }} CUDO</h5>
                                 <p class="card-text">This is your current balance in your connected wallet</p>
                             </div>
                         </div>
@@ -57,6 +57,7 @@
         computed: {
             ...mapState([
                 'account',
+                'accountBalance',
                 // 'etherscanBase',
                 // 'networkId',
             ]),
