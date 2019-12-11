@@ -88,7 +88,7 @@
             pollData() {
                 this.polling = setInterval(() => {
                     this.$store.dispatch('availableDrawDownAmount');
-                }, 1000);
+                }, 10000);
             }
         },
         beforeDestroy() {

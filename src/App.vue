@@ -6,7 +6,7 @@
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav ml-auto">
                     <span class="text-muted mr-4" v-if="account">{{ account }}</span>
-                    <span class="text-warning mr-4" v-if="accountBalance">{{ accountBalance }} CUDO</span>
+                    <span class="text-warning mr-4" v-if="accountBalance">{{ toEtherFixed(accountBalance, 6) }} CUDO</span>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" v-if="!account">
                     <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Sign in</button>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex';
+    import {mapGetters, mapState} from 'vuex';
     import CurrentNetwork from '@/components/CurrentNetwork.vue';
     import web3Connect from '@/web3ConnectService';
 
@@ -40,6 +40,10 @@
                 'account',
                 'accountBalance',
             ]),
+            ...mapGetters([
+                'toEther',
+                'toEtherFixed',
+            ])
         },
         components: {
             CurrentNetwork

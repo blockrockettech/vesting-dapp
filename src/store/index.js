@@ -197,7 +197,9 @@ export default new Vuex.Store({
 
                         resolve(hash);
                     })
-                    .on('confirmation', function(confirmationNumber, receipt){
+                    .on('receipt', function(receipt){
+                        dispatch('balanceOfAccount');
+
                         dispatch('vestingScheduleForBeneficiary');
 
                         dispatch('availableDrawDownAmount');

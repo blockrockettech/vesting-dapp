@@ -1,4 +1,4 @@
-# cudos-vesting-dapp
+# vesting-dapp
 
 ## Project setup
 ```
