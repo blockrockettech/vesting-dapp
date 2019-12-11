@@ -5,54 +5,50 @@
             <p class="lead">This is where you can view and manage your vested CUDO tokens</p>
             <hr class="my-4">
             <div v-if="account">
-                <div class="row">
+                <div class="row" v-if="hasValidSchedule()">
                     <div class="col">
-                        <div class="card bg-light mb-3" style="max-width: 18rem;" v-if="accountBalance">
-                            <div class="card-header">CUDO Token Balance</div>
+                        <div class="card bg-warning text-white mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Vested CUDO Tokens</div>
                             <div class="card-body">
-                                <h5 class="card-title">{{ accountBalance }} CUDO</h5>
-                                <p class="card-text">This is your current balance in your connected wallet</p>
+                                <h5 class="card-title">{{ toEther(schedule._amount) }} CUDO</h5>
+                                <p class="card-text">Starting {{ toDate(schedule._start) }} and ending {{ toDate(schedule._end) }}</p>
                             </div>
                         </div>
                     </div>
-                    <div v-if="hasValidSchedule()">
-                        <div class="col">
-                            <div class="card bg-warning text-white mb-3" style="max-width: 18rem;">
-                                <div class="card-header">Vested CUDO Tokens</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">20000 CUDO</h5>
-                                    <p class="card-text">Starting 1st Jan 2020 and ending 2nd Aug 2020</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card bg-success text-white mb-3" style="max-width: 18rem;">
-                                <div class="card-header">Cudo Token Available NOW</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">1234 CUDO</h5>
-                                    <p class="card-text">Amount of tokens you can draw down from the vesting contract</p>
-                                </div>
+                    <div class="col">
+                        <div class="card bg-info text-white mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Drawn CUDO Tokens</div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ toEther(schedule._totalDrawn) }} of {{ toEther(schedule._amount) }} CUDO</h5>
+                                <p class="card-text">With a remaining vested balance of {{ toEther(schedule._remainingBalance) }} CUDO</p>
                             </div>
                         </div>
                     </div>
-                    <div v-else>
-                        <div class="col">
-                            <div class="alert alert-info">
-                                You do not have a valid vesting schedule for <code>{{ account }}</code>
+                    <div class="col" v-if="availableToDrawnDown">
+                        <div class="card bg-success text-white mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Cudo Token Available NOW</div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ toEtherFixed(availableToDrawnDown._amount, 6) }} CUDO</h5>
+                                <p class="card-text" v-if="availableToDrawnDown._timeLastDrawn === schedule._start">You have never drawn down tokens</p>
+                                <p class="card-text" v-else>You last drew down on {{ toDate(schedule._timeLastDrawn) }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <hr class="my-4">
-                <p class="lead">
-                    <button class="btn btn-primary btn-lg btn-block">Draw down 1234 CUDO Tokens</button>
-                </p>
+                <div v-else class="alert alert-info">
+                    You do not have a valid vesting schedule for <code>{{ account }}</code>
+                </div>
+                <div v-if="hasValidSchedule() && availableToDrawnDown">
+                    <hr class="my-4">
+                    <p class="lead">
+                        <button class="btn btn-primary btn-lg btn-block" @click="drawDown">Draw down {{ toEtherFixed(availableToDrawnDown._amount, 6) }} CUDO Tokens</button>
+                    </p>
+                </div>
             </div>
             <div v-else>
                 <button class="btn btn-secondary btn-lg btn-block" @click="onLogin">Sign in</button>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -61,20 +57,45 @@
 
     export default {
         name: 'home',
+        data() {
+            return {
+                polling: null
+            };
+        },
         computed: {
             ...mapState([
                 'account',
                 'accountBalance',
                 'schedule',
+                'availableToDrawnDown',
+                'web3'
             ]),
             ...mapGetters([
                 'hasValidSchedule',
+                'toEther',
+                'toEtherFixed',
+                'toDate',
             ])
         },
         methods: {
             onLogin() {
                 this.$parent.onLogin();
             },
+            drawDown() {
+                console.log('drawing down tokens...');
+                this.$store.dispatch('drawDown');
+            },
+            pollData() {
+                this.polling = setInterval(() => {
+                    this.$store.dispatch('availableDrawDownAmount');
+                }, 1000);
+            }
         },
+        beforeDestroy() {
+            clearInterval(this.polling);
+        },
+        created() {
+            this.pollData();
+        }
     };
 </script>

@@ -21,6 +21,7 @@ export default new Vuex.Store({
 
         // Vesting
         schedule: null,
+        availableToDrawnDown: null,
 
         web3: null,
         notifyInstance: null,
@@ -52,6 +53,10 @@ export default new Vuex.Store({
             state.schedule = schedule;
         },
 
+        availableToDrawnDown(state, availableToDrawnDown) {
+            state.availableToDrawnDown = availableToDrawnDown;
+        },
+
         web3(state, web3) {
             state.web3 = web3;
         },
@@ -73,6 +78,12 @@ export default new Vuex.Store({
 
             return false;
         },
+
+        toEther: state => (wei) => state.web3.utils.fromWei(wei, 'ether'),
+
+        toEtherFixed: state => (wei, dp) => parseFloat(state.web3.utils.fromWei(wei, 'ether')).toFixed(dp),
+
+        toDate: state => (timestampInSecs) => new Date(timestampInSecs * 1000).toDateString()
     },
     actions: {
         bootstrap({dispatch}, provider) {
@@ -95,14 +106,16 @@ export default new Vuex.Store({
 
             await dispatch('getNetwork');
 
-            state.web3.eth.getAccounts((error, accounts) => {
+            state.web3.eth.getAccounts(async (error, accounts) => {
                 if (!error) {
                     const account = accounts[0];
                     commit('account', account);
 
                     dispatch('balanceOfAccount');
 
-                    dispatch('vestingScheduleForBeneficiary');
+                    await dispatch('vestingScheduleForBeneficiary');
+
+                    dispatch('availableDrawDownAmount');
                 } else {
                     console.log(`Error getting accounts`, error);
                 }
@@ -160,6 +173,28 @@ export default new Vuex.Store({
         async vestingScheduleForBeneficiary({commit, state}) {
             const schedule = await state.vestingContract.methods.vestingScheduleForBeneficiary(state.account).call();
             commit('schedule', schedule);
+        },
+
+        async availableDrawDownAmount({commit, state, getters}) {
+            if (getters.hasValidSchedule(state)) {
+                const availableToDrawnDown = await state.vestingContract.methods.availableDrawDownAmount(state.account).call();
+                commit('availableToDrawnDown', availableToDrawnDown);
+            }
+
+        },
+
+        drawDown({dispatch, state}) {
+            return new Promise((resolve, reject) => {
+                state.vestingContract.methods.drawDown()
+                    .send({
+                        from: state.account
+                    })
+                    .once('transactionHash', (hash) => {
+                        // state.notifyInstance.hash(hash);
+                        resolve(hash);
+                    })
+                    .on('error', reject);
+            });
         },
     },
 });

@@ -1,11 +1,12 @@
 <template>
     <div>
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="min-height: 50px">
-            <router-link to="/">Cudos Vesting Portal</router-link>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+            <span class="navbar-brand">Cudos Vesting Portal</span>
 
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav ml-auto">
-                    <a href="#" class="nav-link">{{ account }}</a>
+                    <span class="text-muted mr-4" v-if="account">{{ account }}</span>
+                    <span class="text-warning mr-4" v-if="accountBalance">{{ accountBalance }} CUDO</span>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" v-if="!account">
                     <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Sign in</button>
@@ -37,6 +38,7 @@
         computed: {
             ...mapState([
                 'account',
+                'accountBalance',
             ]),
         },
         components: {
