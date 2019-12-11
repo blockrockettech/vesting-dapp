@@ -193,6 +193,11 @@ export default new Vuex.Store({
                         // state.notifyInstance.hash(hash);
                         resolve(hash);
                     })
+                    .on('confirmation', function(confirmationNumber, receipt){
+                        dispatch('vestingScheduleForBeneficiary');
+
+                        dispatch('availableDrawDownAmount');
+                    })
                     .on('error', reject);
             });
         },

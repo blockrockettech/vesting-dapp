@@ -19,8 +19,8 @@
                         <div class="card bg-info text-white mb-3" style="max-width: 18rem;">
                             <div class="card-header">Drawn CUDO Tokens</div>
                             <div class="card-body">
-                                <h5 class="card-title">{{ toEther(schedule._totalDrawn) }} of {{ toEther(schedule._amount) }} CUDO</h5>
-                                <p class="card-text">With a remaining vested balance of {{ toEther(schedule._remainingBalance) }} CUDO</p>
+                                <h5 class="card-title">{{ toEtherFixed(schedule._totalDrawn, 6) }} of {{ toEther(schedule._amount) }} CUDO</h5>
+                                <p class="card-text">With a remaining vested balance of {{ toEtherFixed(schedule._remainingBalance, 6) }} CUDO</p>
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ toEtherFixed(availableToDrawnDown._amount, 6) }} CUDO</h5>
                                 <p class="card-text" v-if="availableToDrawnDown._timeLastDrawn === schedule._start">You have never drawn down tokens</p>
-                                <p class="card-text" v-else>You last drew down on {{ toDate(schedule._timeLastDrawn) }}</p>
+                                <p class="card-text" v-else>You last drew down on {{ toDate(schedule._lastDrawnAt) }}</p>
                             </div>
                         </div>
                     </div>
