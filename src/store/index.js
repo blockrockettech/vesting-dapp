@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 
 import * as Web3 from 'web3';
 
+import notifier from "../notifier"
+
 Vue.use(Vuex);
 
 const CudosTokenJson = require("../truffle/CudosToken");
@@ -35,7 +37,7 @@ export default new Vuex.Store({
             state.networkId = networkId;
             state.networkName = networkName;
             state.etherscanBase = etherscanBase;
-            // state.notifyInstance = notifier(networkId);
+            state.notifyInstance = notifier(networkId);
 
             state.cudosTokenContract = new state.web3.eth.Contract(CudosTokenJson.abi, CudosTokenJson.networks[state.networkId].address);
             state.vestingContract = new state.web3.eth.Contract(VestingContractJson.abi, VestingContractJson.networks[state.networkId].address);
@@ -190,7 +192,9 @@ export default new Vuex.Store({
                         from: state.account
                     })
                     .once('transactionHash', (hash) => {
-                        // state.notifyInstance.hash(hash);
+                        // notification popup
+                        state.notifyInstance.hash(hash);
+
                         resolve(hash);
                     })
                     .on('confirmation', function(confirmationNumber, receipt){
