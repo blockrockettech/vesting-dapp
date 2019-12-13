@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="jumbotron">
-            <h1 class="display-4">Welcome to Cudo Vesting Portal</h1>
+            <h1 class="display-4">Welcome to CUDOS Vesting Portal</h1>
             <p class="lead">This is where you can view and manage your vested CUDO tokens</p>
             <hr class="my-4">
             <div v-if="account">
@@ -55,7 +55,7 @@
 <script>
     import {mapGetters, mapState} from "vuex";
     import web3Connect from '@/web3ConnectService';
-    
+
     export default {
         name: 'home',
         data() {

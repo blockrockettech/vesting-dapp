@@ -1,7 +1,7 @@
 <template>
     <div>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-            <span class="navbar-brand">Cudos Vesting Portal</span>
+            <span class="navbar-brand">CUDOS Vesting Portal</span>
 
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav ml-auto">
