@@ -54,7 +54,8 @@
 
 <script>
     import {mapGetters, mapState} from "vuex";
-
+    import web3Connect from '@/web3ConnectService';
+    
     export default {
         name: 'home',
         data() {
@@ -79,7 +80,7 @@
         },
         methods: {
             onLogin() {
-                this.$parent.onLogin();
+                web3Connect.toggleModal();
             },
             drawDown() {
                 console.log('drawing down tokens...');
@@ -96,6 +97,10 @@
         },
         created() {
             this.pollData();
+
+            web3Connect.on('connect', provider => {
+                this.$store.dispatch('bootstrap', provider);
+            });
         }
     };
 </script>

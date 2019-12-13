@@ -8,9 +8,6 @@
                     <span class="text-muted mr-4" v-if="account">{{ account }}</span>
                     <span class="text-warning mr-4" v-if="accountBalance">{{ toEtherFixed(accountBalance, 6) }} CUDO</span>
                 </ul>
-                <form class="form-inline my-2 my-lg-0" v-if="!account">
-                    <button class="btn btn-secondary my-2 my-sm-0" @click="onLogin">Sign in</button>
-                </form>
             </div>
         </nav>
 
@@ -25,7 +22,6 @@
 <script>
     import {mapGetters, mapState} from 'vuex';
     import CurrentNetwork from '@/components/CurrentNetwork.vue';
-    import web3Connect from '@/web3ConnectService';
 
     export default {
         name: 'App',
@@ -47,16 +43,6 @@
         },
         components: {
             CurrentNetwork
-        },
-        methods: {
-            onLogin() {
-                web3Connect.toggleModal();
-            },
-        },
-        created: async function () {
-            web3Connect.on('connect', provider => {
-                this.$store.dispatch('bootstrap', provider);
-            });
         },
     };
 </script>
