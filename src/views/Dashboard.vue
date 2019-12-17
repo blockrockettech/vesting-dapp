@@ -19,7 +19,7 @@
                         <div class="card bg-info text-white mb-3" style="max-width: 18rem;">
                             <div class="card-header">Drawn CUDO Tokens</div>
                             <div class="card-body">
-                                <h5 class="card-title">{{ toEtherFixed(schedule._totalDrawn, 6) }} of {{ toEther(schedule._amount) }} CUDO</h5>
+                                <h5 class="card-title">{{ toEtherFixed(schedule._totalDrawn, 6) }}</h5>
                                 <p class="card-text">With a remaining vested balance of {{ toEtherFixed(schedule._remainingBalance, 6) }} CUDO</p>
                             </div>
                         </div>
